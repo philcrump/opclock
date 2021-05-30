@@ -1,0 +1,15 @@
+[Unit]
+Description=Opclock
+After=time-sync.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory={{directory}}
+ExecStart={{directory}}/opclock
+Restart=always
+RestartSec=2
+TimeoutStopSec=3
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Opclock pre-network
+After=local-fs.target sysinit.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory={{directory}}
+ExecStart={{directory}}/opclock-waitnetwork
+
+[Install]
+WantedBy=basic.target

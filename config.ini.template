@@ -1,0 +1,14 @@
+[backlight]
+# level: 30-180
+level = 100
+
+[events]
+# source_type: DEMO: built-in example, HTTP: Load from JSON at URL, FILE: [not implemented]
+source_type = DEMO
+file_filepath = 
+# http_url, URL to poll for JSON events when source_type == HTTP, SSL certificate is not validated.
+http_url = https://127.0.0.1:4443/
+
+[display]
+# Show a single expired event, optional.
+show_last_expired_event = false
