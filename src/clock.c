@@ -72,7 +72,7 @@ void *clock_thread(void *arg)
 
     pthread_mutex_unlock(&app_state_ptr->events_mutex);
 
-    sleep_ms_signal(10, &app_state_ptr->app_exit);
+    sleep_ms_or_signal(10, &app_state_ptr->app_exit);
   }
 
   return NULL;

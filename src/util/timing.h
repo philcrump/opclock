@@ -10,6 +10,6 @@ uint64_t timestamp_ms(void);
 
 void sleep_ms(uint32_t _duration);
 
-void sleep_ms_signal(uint32_t _duration, bool *app_exit_ptr);
+void sleep_ms_or_signal(uint32_t _duration, bool *app_exit_ptr);
 
 #endif /* __TIMING_H__ */

@@ -193,7 +193,7 @@ void *screen_thread(void *arg)
 
   while(!*app_exit_ptr)
   {
-    sleep_ms_signal(1000, app_exit_ptr);
+    sleep_ms_or_signal(1000, app_exit_ptr);
   }
 
   /* De-initialise timer */

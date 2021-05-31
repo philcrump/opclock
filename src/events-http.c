@@ -82,7 +82,7 @@ void *events_http_thread(void *arg)
     c = curl_easy_init();
     if(c == NULL)
     {
-      sleep_ms_signal(100, &app_state_ptr->app_exit);
+      sleep_ms_or_signal(100, &app_state_ptr->app_exit);
       app_state_ptr->events_source_ok = false;
       continue;
     }
@@ -108,7 +108,7 @@ void *events_http_thread(void *arg)
     {
       fprintf(stderr, "[events-http] curl error: %s (%d)\n", curl_easy_strerror(r), r);
       app_state_ptr->events_source_ok = false;
-      sleep_ms_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
+      sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
       continue;
     }
 
@@ -116,7 +116,7 @@ void *events_http_thread(void *arg)
     {
       fprintf(stderr, "[events-http] JSON Validation Error\n");
       app_state_ptr->events_source_ok = false;
-      sleep_ms_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
+      sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
       continue;
     }
 
@@ -125,7 +125,7 @@ void *events_http_thread(void *arg)
     {
       fprintf(stderr, "[events-http] JSON Decode Error\n");
       app_state_ptr->events_source_ok = false;
-      sleep_ms_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
+      sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
       continue;
     }
 
@@ -134,7 +134,7 @@ void *events_http_thread(void *arg)
       fprintf(stderr, "[events-http] JSON Tree Error: %s\n", json_errormsg);
       app_state_ptr->events_source_ok = false;
       json_delete(json_node);
-      sleep_ms_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
+      sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
       continue;
     }
 
@@ -145,7 +145,7 @@ void *events_http_thread(void *arg)
       fprintf(stderr, "[events-http] JSON - Couldn't find 'events'\n");
       app_state_ptr->events_source_ok = false;
       json_delete(json_node);
-      sleep_ms_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
+      sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
       continue;
     }
 
@@ -161,7 +161,7 @@ void *events_http_thread(void *arg)
         fprintf(stderr, "[events-http] JSON - description not found\n");
         app_state_ptr->events_source_ok = false;
         json_delete(json_node);
-        sleep_ms_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
+        sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
         continue;
       }
       event_description = strdup(var_node->string_);
@@ -173,7 +173,7 @@ void *events_http_thread(void *arg)
         fprintf(stderr, "[events-http] JSON - type not found\n");
         app_state_ptr->events_source_ok = false;
         json_delete(json_node);
-        sleep_ms_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
+        sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
         continue;
       }
       event_type = (int)var_node->number_;
@@ -185,7 +185,7 @@ void *events_http_thread(void *arg)
         fprintf(stderr, "[events-http] JSON - time_unix not found\n");
         app_state_ptr->events_source_ok = false;
         json_delete(json_node);
-        sleep_ms_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
+        sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
         continue;
       }
       event_time_unix = (int)var_node->number_;
@@ -213,7 +213,7 @@ void *events_http_thread(void *arg)
     }
 
     app_state_ptr->events_source_ok = true;
-    sleep_ms_signal(HTTP_UPDATE_INTERVAL_S * 1000, &app_state_ptr->app_exit);
+    sleep_ms_or_signal(HTTP_UPDATE_INTERVAL_S * 1000, &app_state_ptr->app_exit);
   }
 
   curl_global_cleanup();
