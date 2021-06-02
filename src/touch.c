@@ -238,6 +238,7 @@ static void touch_run(char *touch_path, void (*touch_callback)(int type, int x, 
 
 static bool touch_backlight_ison = true;
 static uint64_t last_touch_start_time = 0;
+static uint64_t last_firsttouch_start_time = 0;
 
 static void touch_process(int touch_type, int touch_x, int touch_y)
 {
@@ -246,28 +247,38 @@ static void touch_process(int touch_type, int touch_x, int touch_y)
 
   if(touch_type == TOUCH_EVENT_START)
   {
+    uint64_t current_time = monotonic_ms();
+
+    /* A repeat touch within 20ms is assumed to be a glitch */
+    if(current_time < (last_touch_start_time+20))
+    {
+      return;
+    }
+
     if(touch_backlight_ison)
     {
-      uint64_t current_time = monotonic_ms();
-
-      if(current_time < (last_touch_start_time+500))
+      if(current_time < (last_firsttouch_start_time+500))
       {
         /* Double-tap ! */
-        last_touch_start_time = 0;
         backlight_power(false);
         touch_backlight_ison = false;
       }
       else
       {
-        last_touch_start_time = current_time;
+        last_firsttouch_start_time = current_time;
       }
     }
-    else
+    /* Don't allow switching back on within 250ms of switching off */
+    else if(current_time > (last_touch_start_time+250))
     {
       /* Switch it back on! */
       backlight_power(true);
       touch_backlight_ison = true;
+      last_firsttouch_start_time = 0;
     }
+
+    last_touch_start_time = current_time;
+
 #if 0
     if(areaTouched(BUTTON_X_POS, BUTTON_WIDTH, BUTTON_Y_POS, BUTTON_HEIGHT))
     {
