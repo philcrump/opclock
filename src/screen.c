@@ -145,7 +145,7 @@ bool screen_init(bool splash_enable, char *splash_lower_line)
 
   screen_fb_ptr = (char*)mmap(0, SCREEN_PIXEL_COUNT * sizeof(screen_pixel_t), PROT_READ | PROT_WRITE, MAP_SHARED, screen_fb_fd, 0);
                     
-  if((int)screen_fb_ptr == -1) 
+  if((int64_t)screen_fb_ptr == -1)
   {
     printf("Error: Invalid framebuffer pointer.\n");
     return false;
