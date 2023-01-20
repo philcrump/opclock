@@ -15,7 +15,7 @@
 #include "font/font.h"
 #include "util/timing.h"
 
-const screen_pixel_t graphics_white_pixel;
+extern const screen_pixel_t graphics_white_pixel;
 
 void *clock_thread(void *arg)
 {

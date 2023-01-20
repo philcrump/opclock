@@ -4,24 +4,7 @@
 CC := gcc
 COPT := -O3 -march=native -mtune=native
 
-# Fix FPU detection for ARM SBCs, using devicetree
-DTMODEL := $(shell cat /sys/firmware/devicetree/base/model 2>/dev/null)
-F_CHECKDTMODEL = $(if $(findstring $(1),${DTMODEL}),$(2))
-# Jetson Nano is detected correctly
-# Raspberry Pi 2 / Zero is detected correctly
-DTMODEL_RPI2 := Raspberry Pi 2 Model B 
-DTMODEL_RPI3 := Raspberry Pi 3 Model B 
-DTMODEL_RPI4 := Raspberry Pi 4 Model B 
-COPT_RPI2 := -mfpu=neon-vfpv4
-COPT_RPI34 := -mfpu=neon-fp-armv8
-COPT += $(call F_CHECKDTMODEL,$(DTMODEL_RPI2),$(COPT_RPI2))
-COPT += $(call F_CHECKDTMODEL,$(DTMODEL_RPI3),$(COPT_RPI34))
-COPT += $(call F_CHECKDTMODEL,$(DTMODEL_RPI4),$(COPT_RPI34))
-# Required for NEON
-COPT += -funsafe-math-optimizations
-
 CFLAGS := -Wall -Wextra -Wpedantic -Werror -std=gnu11 -D_GNU_SOURCE -DNEON_OPTS -pthread
-
 BUILD_VERSION := $(shell git describe --dirty --always 2>/dev/null)
 ifeq (${BUILD_VERSION},)
 	BUILD_VERSION := "untracked"
