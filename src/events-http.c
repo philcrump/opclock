@@ -49,7 +49,7 @@ void *events_http_thread(void *arg)
   app_state_t *app_state_ptr = (app_state_t *)arg;
 
   int r;
-  JsonNode *json_node, *events_node, *event_node, *var_node;
+  JsonNode *json_node, *event_node, *var_node;
   char json_errormsg[256];
 
   time_t time_now;
@@ -138,21 +138,10 @@ void *events_http_thread(void *arg)
       continue;
     }
 
-    /* Find 'events' member of root object */
-    events_node = json_find_member(json_node, "events");
-    if(events_node == NULL)
-    {
-      fprintf(stderr, "[events-http] JSON - Couldn't find 'events'\n");
-      app_state_ptr->events_source_ok = false;
-      json_delete(json_node);
-      sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
-      continue;
-    }
-
     time(&time_now);
 
     /* Loop through array for each event */
-    json_foreach(event_node, events_node)
+    json_foreach(event_node, json_node)
     {
       /* Description */
       var_node = json_find_member(event_node, "description");
@@ -166,7 +155,34 @@ void *events_http_thread(void *arg)
       }
       event_description = strdup(var_node->string_);
 
+      /* Auto Description (optional) */
+      var_node = json_find_member(event_node, "autodescription");
+      if(var_node != NULL && var_node->tag == JSON_STRING)
+      {
+        free(event_description);
+        event_description = strdup(var_node->string_);
+      }
+
+      /* Target (optional) */
+      var_node = json_find_member(event_node, "target");
+      if(var_node != NULL && var_node->tag == JSON_STRING)
+      {
+        char *_event_description = event_description;
+
+        if(asprintf(&event_description, "%s - %s", var_node->string_, _event_description) < 0)
+        {
+          fprintf(stderr, "[events-http] JSON - target failed to add to description string\n");
+          app_state_ptr->events_source_ok = false;
+          json_delete(json_node);
+          sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
+          continue;
+        }
+
+        free(_event_description);
+      }
+
       /* Type */
+/*
       var_node = json_find_member(event_node, "type");
       if(var_node == NULL || var_node->tag != JSON_NUMBER)
       {
@@ -177,21 +193,23 @@ void *events_http_thread(void *arg)
         continue;
       }
       event_type = (int)var_node->number_;
+*/
+      event_type = (int)0;
 
       /* Time */
-      var_node = json_find_member(event_node, "time_unix");
-      if(var_node == NULL || var_node->tag != JSON_NUMBER)
+      var_node = json_find_member(event_node, "time");
+      if(var_node == NULL || var_node->tag != JSON_STRING)
       {
-        fprintf(stderr, "[events-http] JSON - time_unix not found\n");
+        fprintf(stderr, "[events-http] JSON - time not found\n");
         app_state_ptr->events_source_ok = false;
         json_delete(json_node);
         sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
         continue;
       }
-      event_time_unix = (int)var_node->number_;
+      event_time_unix = (int)(timestamp_no_ms_from_rfc8601(var_node->string_) / 1000);
 
-      /* For anything newer than 2 minutes ago, append to temporary list */
-      if(event_time_unix > (time_now - 120))
+      /* For anything newer than a minute ago, append to temporary list */
+      if(event_time_unix > (time_now - 60))
       {
         events_append(&events_downloaded_list, event_time_unix, event_description, event_type);
       }

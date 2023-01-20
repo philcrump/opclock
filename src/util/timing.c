@@ -1,4 +1,5 @@
 #include <time.h>
+#include <string.h>
 #include <errno.h>
 
 #include "timing.h"
@@ -53,3 +54,13 @@ void sleep_ms_or_signal(uint32_t _duration, bool *app_exit_ptr)
     }
 }
 
+uint64_t timestamp_no_ms_from_rfc8601(const char *time_string)
+{
+    struct tm ctime;
+
+    memset(&ctime, 0, sizeof(struct tm));
+
+    strptime(time_string, "%FT%T%z", &ctime);
+
+    return (((uint64_t)mktime(&ctime)) * 1000);
+}
