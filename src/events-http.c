@@ -150,8 +150,8 @@ void *events_http_thread(void *arg)
         fprintf(stderr, "[events-http] JSON - description not found\n");
         app_state_ptr->events_source_ok = false;
         json_delete(json_node);
-        sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
-        continue;
+        json_node = NULL;
+        break;
       }
       event_description = strdup(var_node->string_);
 
@@ -174,11 +174,18 @@ void *events_http_thread(void *arg)
           fprintf(stderr, "[events-http] JSON - target failed to add to description string\n");
           app_state_ptr->events_source_ok = false;
           json_delete(json_node);
-          sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
-          continue;
+          json_node = NULL;
+          break;
         }
 
         free(_event_description);
+      }
+
+      /* Catch errors from loop */
+      if(json_node == NULL)
+      {
+        sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
+        continue;
       }
 
       /* Type */
