@@ -16,7 +16,7 @@
 /** DATE **/
 
 #define DATE_WIDTH      350
-#define DATE_HEIGHT     75
+#define DATE_HEIGHT     84
 static screen_pixel_t date_buffer[DATE_HEIGHT][DATE_WIDTH] __attribute__ ((aligned (NEON_ALIGNMENT))) = { 0 };
 
 #define DATE_POS_X    15
@@ -25,7 +25,7 @@ static screen_pixel_t date_buffer[DATE_HEIGHT][DATE_WIDTH] __attribute__ ((align
 /** TIME **/
 
 #define TIME_WIDTH      350
-#define TIME_HEIGHT     75
+#define TIME_HEIGHT     84
 static screen_pixel_t time_buffer[TIME_HEIGHT][TIME_WIDTH] __attribute__ ((aligned (NEON_ALIGNMENT))) = { 0 };
 
 #define TIME_POS_X    (SCREEN_WIDTH - 15 - TIME_WIDTH)
