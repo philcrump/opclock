@@ -28,7 +28,7 @@ static screen_pixel_t date_buffer[DATE_HEIGHT][DATE_WIDTH] __attribute__ ((align
 #define TIME_HEIGHT     84
 static screen_pixel_t time_buffer[TIME_HEIGHT][TIME_WIDTH] __attribute__ ((aligned (NEON_ALIGNMENT))) = { 0 };
 
-#define TIME_POS_X    (SCREEN_WIDTH - 15 - TIME_WIDTH)
+#define TIME_POS_X    (SCREEN_SIZE_X - 15 - TIME_WIDTH)
 #define TIME_POS_Y    15
 
 /** EVENTS **/
@@ -48,7 +48,7 @@ static screen_pixel_t event_line_buffer[EVENT_LINE_HEIGHT][EVENT_LINE_WIDTH] __a
 static screen_pixel_t eventsource_buffer[EVENTSOURCE_HEIGHT][EVENTSOURCE_WIDTH] __attribute__ ((aligned (NEON_ALIGNMENT))) = { 0 };
 
 #define EVENTSOURCE_POS_X    10
-#define EVENTSOURCE_POS_Y    (SCREEN_HEIGHT - 10 - EVENTSOURCE_HEIGHT)
+#define EVENTSOURCE_POS_Y    (SCREEN_SIZE_Y - 10 - EVENTSOURCE_HEIGHT)
 
 /** EVENT STATUS **/
 
@@ -57,7 +57,7 @@ static screen_pixel_t eventsource_buffer[EVENTSOURCE_HEIGHT][EVENTSOURCE_WIDTH] 
 static screen_pixel_t eventstatus_buffer[EVENTSTATUS_HEIGHT][EVENTSTATUS_WIDTH] __attribute__ ((aligned (NEON_ALIGNMENT))) = { 0 };
 
 #define EVENTSTATUS_POS_X    (EVENTSOURCE_POS_X + EVENTSOURCE_WIDTH + 15)
-#define EVENTSTATUS_POS_Y    (SCREEN_HEIGHT - 10 - EVENTSTATUS_HEIGHT)
+#define EVENTSTATUS_POS_Y    (SCREEN_SIZE_Y - 10 - EVENTSTATUS_HEIGHT)
 
 const screen_pixel_t graphics_white_pixel =
 {

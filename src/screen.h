@@ -1,9 +1,6 @@
 #ifndef __SCREEN_H__
 #define __SCREEN_H__
 
-#define SCREEN_WIDTH    800
-#define SCREEN_HEIGHT   480
-
 typedef struct {
   uint8_t Blue;
   uint8_t Green;

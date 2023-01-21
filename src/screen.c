@@ -110,7 +110,7 @@ void screen_splash(char *lower_line)
   pthread_mutex_lock(&screen_backbuffer_mutex);
 
   font_render_string_with_callback(
-    (SCREEN_WIDTH- font_width_string(&font_dejavu_sans_72, splash_string)) / 2, // Align center
+    (SCREEN_SIZE_X- font_width_string(&font_dejavu_sans_72, splash_string)) / 2, // Align center
     100,
     &font_dejavu_sans_72,
     splash_string,
@@ -120,7 +120,7 @@ void screen_splash(char *lower_line)
   if(lower_line != NULL)
   {
     font_render_string_with_callback(
-      (SCREEN_WIDTH- font_width_string(&font_dejavu_sans_36, lower_line)) / 2, // Align center
+      (SCREEN_SIZE_X- font_width_string(&font_dejavu_sans_36, lower_line)) / 2, // Align center
       300,
       &font_dejavu_sans_36,
       lower_line,
