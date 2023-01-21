@@ -2,7 +2,7 @@
 
 UTC Date and Time clock with event feed designed for co-ordinating spacecraft operations.
 
-This software has been developed with the official Raspberry Pi 7" touchscreen and a Raspberry Pi 4.
+This software has been developed with the official Raspberry Pi 7" touchscreen and a Raspberry Pi 4, and Raspberry Pi OS Lite (64-bit) (Bullseye.)
 
 <p align="center">
   <img src="/img/eventcountdown.gif" width="50%" />
