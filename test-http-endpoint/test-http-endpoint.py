@@ -5,7 +5,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import ssl
 import json
-from time import time
+from datetime import datetime, timedelta
 
 HTTPS_ADDRESS = 'localhost'
 HTTPS_PORT = 4443
@@ -18,26 +18,25 @@ TYPE_UPLINK_STOP = 4
 
 print("Generating event list..")
 
-json_obj = {}
-json_obj['events'] = list()
+json_array = list()
 
-current_time_unix = int(time())
+current_datetime = datetime.utcnow()
 
-json_obj['events'].append({'description': 'AoS ISS', 'type': TYPE_DOWNLINK_START, 'time_unix': current_time_unix+10})
+json_array.append({'description': 'AoS ISS', 'type': TYPE_DOWNLINK_START, 'time': (current_datetime + timedelta(seconds=10)).isoformat()})
 
-json_obj['events'].append({'description': 'Start Questions', 'type': TYPE_UPLINK_START, 'time_unix': current_time_unix+30})
+json_array.append({'description': 'Start Questions', 'type': TYPE_UPLINK_START, 'time': (current_datetime + timedelta(seconds=30)).isoformat()})
 
-json_obj['events'].append({'description': 'Second Questions', 'type': TYPE_NONE, 'time_unix': current_time_unix+72})
+json_array.append({'description': 'Second Questions', 'type': TYPE_NONE, 'time': (current_datetime + timedelta(seconds=72)).isoformat()})
 
-json_obj['events'].append({'description': 'End Questions', 'type': TYPE_UPLINK_STOP, 'time_unix': current_time_unix+120})
+json_array.append({'description': 'End Questions', 'type': TYPE_UPLINK_STOP, 'time': (current_datetime + timedelta(seconds=120)).isoformat()})
 
-json_obj['events'].append({'description': 'LoS ISS', 'type': TYPE_DOWNLINK_STOP, 'time_unix': current_time_unix+150})
+json_array.append({'description': 'LoS ISS', 'type': TYPE_DOWNLINK_STOP, 'time': (current_datetime + timedelta(seconds=150)).isoformat()})
 
-json_obj['events'].append({'description': 'Debrief', 'type': TYPE_NONE, 'time_unix': current_time_unix+380})
+json_array.append({'description': 'Debrief', 'type': TYPE_NONE, 'time': (current_datetime + timedelta(seconds=210)).isoformat()})
 
-json_bytes = json.dumps(json_obj).encode()
+json_bytes = json.dumps(json_array).encode()
 
-print(json.dumps(json_obj, indent=4))
+print(json.dumps(json_array, indent=4))
 
 class RequestHandler(BaseHTTPRequestHandler):
 
