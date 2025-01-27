@@ -49,6 +49,7 @@ void *clock_thread(void *arg)
     pthread_mutex_lock(&app_state_ptr->events_mutex);
 
     event_cursor = app_state_ptr->events;
+    int r;
     while(event_cursor != NULL)
     {
       event_diff = difftime(rawtime, event_cursor->event_time);
@@ -58,12 +59,16 @@ void *clock_thread(void *arg)
       {
         free(event_cursor->countdown_string);
       }
-      asprintf(&event_cursor->countdown_string, "%c%02d:%02d:%02d",
+      r = asprintf(&event_cursor->countdown_string, "%c%02d:%02d:%02d",
         event_diff == 0 ? ' ' : (event_diff < 0 ? '-' : '+'),
         (abs_event_diff / 3600),
         ((abs_event_diff % 3600) / 60),
         (abs_event_diff % 60)
       );
+      if(r < 0)
+      {
+        printf("[clock] Error allocating countdown string for event\n");
+      }
 
       event_cursor = event_cursor->next;
     }

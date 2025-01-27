@@ -47,10 +47,17 @@ static bool touch_detecthw(char **touchscreen_path_ptr)
     else if(found_name && strncmp("H:", line, 2) == 0 && strstr(line,"mouse") != NULL)
     {
       sscanf(strstr(line,"event"), "%s", handler_device);
-      asprintf(touchscreen_path_ptr, "/dev/input/%s", handler_device);
+      int r = asprintf(touchscreen_path_ptr, "/dev/input/%s", handler_device);
       fclose(fp);
       free(line);
-      return true;
+      if(r >= 0)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
     }   
   }
 

@@ -20,27 +20,40 @@ void backlight_level(int32_t level_value)
 
   char *level_command_string;
 
-  asprintf(&level_command_string, "%s %d >/dev/null", BACKLIGHT_LEVEL_SCRIPTPATH, level_value);
+  int r = asprintf(&level_command_string, "%s %d >/dev/null", BACKLIGHT_LEVEL_SCRIPTPATH, level_value);
 
-  system(level_command_string);
-
-  free(level_command_string);
+  if(r >= 0)
+  {
+    r = system(level_command_string); // Result result ignored.
+    free(level_command_string);
+  }
 }
 
 void backlight_power(bool on)
 {
   char *power_command_string;
+  int r;
 
   if(on)
   {
-    asprintf(&power_command_string, "%s 0  >/dev/null", BACKLIGHT_POWER_SCRIPTPATH);
+    r = asprintf(&power_command_string, "%s 0  >/dev/null", BACKLIGHT_POWER_SCRIPTPATH);
   }
   else
   {
-    asprintf(&power_command_string, "%s 1 >/dev/null", BACKLIGHT_POWER_SCRIPTPATH);
+    r = asprintf(&power_command_string, "%s 1 >/dev/null", BACKLIGHT_POWER_SCRIPTPATH);
   }
 
-  system(power_command_string);
-
-  free(power_command_string);
+  if(r < 0)
+  {
+    printf("[backlight] Error allocating power command string\n");
+  }
+  else
+  {
+    r = system(power_command_string); // Result result ignored.
+    if(r < 0)
+    {
+      printf("[backlight] Error running power command\n");
+    }
+    free(power_command_string);
+  }
 }

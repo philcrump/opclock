@@ -37,7 +37,7 @@ static app_state_t app_state = {
 
   .config = {
     .backlight_level = 180,
-    .event_source = EVENT_SOURCE_DEMO,
+    .event_source = EVENT_SOURCE_HTTP,
     .display_show_previous_expired_event = false
   },
   .app_exit = false
@@ -162,11 +162,19 @@ int main(int argc, char* argv[])
   }
 
   char *eventsource_string;
-  asprintf(&eventsource_string, "Source: %s", event_source_names[app_state.config.event_source]);
+  int r = asprintf(&eventsource_string, "Source: %s", event_source_names[app_state.config.event_source]);
+  if(r < 0)
+  {
+    printf("[main] Error allocating eventsource string\n");
+    eventsource_string = NULL;
+  }
 
   while(!app_state.app_exit)
   {
-    eventsource_render(eventsource_string);
+    if(eventsource_string != NULL)
+    {
+      eventsource_render(eventsource_string);
+    }
     if(app_state.events_source_ok)
     {
       eventstatus_render("Status: OK", true);

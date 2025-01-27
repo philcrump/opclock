@@ -2,7 +2,7 @@
 # Compile flags
 
 CC := gcc
-COPT := -O3 -march=native -mtune=native
+COPT := -O3 -march=native -mtune=native -D_FORTIFY_SOURCE=2 -fstack-protector-strong
 
 CFLAGS := -Wall -Wextra -Wpedantic -Werror -std=gnu11 -D_GNU_SOURCE -DNEON_OPTS -pthread
 BUILD_VERSION := $(shell git describe --dirty --always 2>/dev/null)

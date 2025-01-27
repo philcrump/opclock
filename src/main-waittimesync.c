@@ -26,6 +26,7 @@ int main(int argc, char* argv[])
   (void) argv;
 
   char *splash_comment_string;
+  int r;
 
   /* Open a socket to get the network address */
   int fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -36,12 +37,18 @@ int main(int argc, char* argv[])
     strncpy(ifr.ifr_name, INTERFACE_NAME, IFNAMSIZ-1);
     ioctl(fd, SIOCGIFADDR, &ifr);
     close(fd);
-    asprintf(&splash_comment_string, "%s - Waiting for time sync..", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
+    r = asprintf(&splash_comment_string, "%s - Waiting for time sync..", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
   }
   else
   {
     fprintf(stderr, "Error getting network address!\n");
-    asprintf(&splash_comment_string, "Waiting for time sync..");
+    r = asprintf(&splash_comment_string, "Waiting for time sync..");
+  }
+
+  if(r < 0)
+  {
+    fprintf(stderr, "[main] Failed to allocate splash comment string, exiting..\n");
+    return 1;
   }
 
   /* Switch on screen */

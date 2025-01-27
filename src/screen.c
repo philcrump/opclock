@@ -105,7 +105,12 @@ void screen_splash(char *lower_line)
 {
   char *splash_string;
 
-  asprintf(&splash_string, "OpClock");
+  int r = asprintf(&splash_string, "OpClock");
+  if(r < 0)
+  {
+    // asprintf allocation of string failed
+    return;
+  }
 
   pthread_mutex_lock(&screen_backbuffer_mutex);
 

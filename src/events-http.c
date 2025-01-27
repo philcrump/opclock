@@ -145,9 +145,17 @@ void *events_http_thread(void *arg)
     {
       /* Description */
       var_node = json_find_member(event_node, "description");
-      if(var_node == NULL || var_node->tag != JSON_STRING)
+      if(var_node == NULL)
       {
         fprintf(stderr, "[events-http] JSON - description not found\n");
+        app_state_ptr->events_source_ok = false;
+        json_delete(json_node);
+        json_node = NULL;
+        break;
+      }
+      if(var_node->tag != JSON_STRING)
+      {
+        fprintf(stderr, "[events-http] JSON - description is not a string\n");
         app_state_ptr->events_source_ok = false;
         json_delete(json_node);
         json_node = NULL;
@@ -189,7 +197,7 @@ void *events_http_thread(void *arg)
       }
 
       /* Type */
-/*
+#if 0
       var_node = json_find_member(event_node, "type");
       if(var_node == NULL || var_node->tag != JSON_NUMBER)
       {
@@ -200,10 +208,11 @@ void *events_http_thread(void *arg)
         continue;
       }
       event_type = (int)var_node->number_;
-*/
+#else
       event_type = (int)0;
-
+#endif
       /* Time */
+#if 1
       var_node = json_find_member(event_node, "time");
       if(var_node == NULL || var_node->tag != JSON_STRING)
       {
@@ -214,6 +223,19 @@ void *events_http_thread(void *arg)
         continue;
       }
       event_time_unix = (int)(timestamp_no_ms_from_rfc8601(var_node->string_) / 1000);
+#else
+      var_node = json_find_member(event_node, "time_unix");
+      if(var_node == NULL || var_node->tag != JSON_NUMBER)
+      {
+        fprintf(stderr, "[events-http] JSON - type not found\n");
+        app_state_ptr->events_source_ok = false;
+        json_delete(json_node);
+        sleep_ms_or_signal(HTTP_RETRY_PERIOD_S * 1000, &app_state_ptr->app_exit);
+        continue;
+      }
+      event_time_unix = (int)var_node->number_;
+
+#endif
 
       /* For anything newer than a minute ago, append to temporary list */
       if(event_time_unix > (time_now - 60))
